@@ -31,6 +31,7 @@ git clone https://github.com/SEU-USUARIO/poc-bedrock-text-to-sql.git
 ├── chatfrontend.py           # Interface de front-end usando Streamlit
 ├── chatbackend.py            # Lógica de back-end para gerar e interpretar queries
 ├── settings.py               # Configurações de domínio e outras definições
+├── front.py                  # Interface de front personalizada usando Streamlit (validar botões)
 ├── requirements.txt          # Lista de dependências do projeto
 ├── .env                      # Arquivo contendo as variáveis de ambiente
 ├── README.md                 # Documentação do projeto
