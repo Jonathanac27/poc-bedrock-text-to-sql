@@ -155,18 +155,8 @@ DOMAIN_DESCRIPTIONS = {
             "investimento_category": "Categoria atribuída com base no investimento."
         }
     },
-     "v4company": {
-        "schema": "v4company",
-        "table": "enps",
-        "columns": {
-            "dt_data": "",
-            "franqueado": "",
-            "pergunta": "",
-            "vlr_nota": "",
-            "id_franqueado": "",
-        }
-    }
 }
+
 
 
 
