@@ -1,9 +1,8 @@
 import os
 import pandas as pd
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, MetaData, Table, Column, String
+from sqlalchemy import create_engine, MetaData, Table, Column, String, Integer, Float
 from sqlalchemy.orm import sessionmaker
-from datetime import datetime
 
 # Carregar as variáveis de ambiente
 load_dotenv()
@@ -42,16 +41,16 @@ def generate_catalog_from_csv(schema, table_name, csv_file, output_file):
 
     print(f"Catálogo gerado com sucesso e salvo em {output_file}")
 
-# Função de conexão com o banco de dados SQL Server
+# Função de conexão com o banco de dados
 def get_db_engine():
-    user = os.getenv("user_sql")
-    password = os.getenv("password_sql")
-    host = os.getenv("host_sql")
-    port = os.getenv("port_sql")
-    dbname = os.getenv("database_sql")
+    user = os.getenv("user")
+    password = os.getenv("password")
+    host = os.getenv("host")
+    port = os.getenv("port")
+    dbname = os.getenv("database")
     
-    # Montar a string de conexão para SQL Server
-    db_url = f"mssql+pyodbc://{user}:{password}@{host}:{port}/{dbname}?driver=ODBC+Driver+17+for+SQL+Server"
+    # Montar a string de conexão
+    db_url = f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
     
     # Criar o engine
     return create_engine(db_url)
@@ -75,13 +74,9 @@ def create_table_from_csv(engine, schema, table_name, csv_file):
 def load_csv_to_db(engine, schema, table_name, csv_file):
     # Criar o DataFrame a partir do CSV
     df = pd.read_csv(csv_file)
-    inserted_at = 'inserted_at'
-    df = df.astype('string')
-    df[f'{inserted_at}'] = datetime.now()
-
+    
     # Enviar os dados para o banco de dados
     df.to_sql(table_name, engine, schema=schema, if_exists='append', index=False)
-
 
 if __name__ == "__main__":
     # Definir variáveis
@@ -92,7 +87,8 @@ if __name__ == "__main__":
     csv_file = os.path.join(csv_folder, NOME_DO_CSV)  # Caminho completo para o arquivo CSV
     output_file = 'catalogo_gerado.py'  # Nome do arquivo de saída
 
-    # Criar a conexão com o banco de dados SQL Server
+    
+    # Criar a conexão com o banco de dados
     engine = get_db_engine()
     
     # Criar a tabela automaticamente

@@ -112,3 +112,14 @@ Selecione o modelo de marketing (por exemplo, anthropic.claude-3-5-sonnet-202406
 Siga as instruções para ativar o modelo na documentação da aws:
  https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html
 
+**CSV to SQL/PostgreSQL ETL Script with Catalog Generator**
+
+
+Este repositório contém um script Python que realiza um processo simples de ETL, carregando dados de um arquivo CSV para um banco de dados SQL/PostgreSQL, e gerando um catálogo das colunas do CSV, que é salvo em um arquivo Python no formato especificado. O script também pode ser facilmente adaptado para salvar o catálogo em formato JSON.
+
+Funcionalidades
+Carrega credenciais de banco de dados a partir de variáveis de ambiente com load_dotenv.
+Lê um arquivo CSV e insere seus dados em uma tabela do banco de dados SQL/PostgreSQL.
+Gera automaticamente um catálogo das colunas do CSV, salvando-o em um arquivo .py com descrições de colunas vazias.
+Flexível para ser adaptado para outros formatos de saída, como JSON.
+
