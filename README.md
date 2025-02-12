@@ -111,3 +111,4 @@ Selecione o modelo de marketing (por exemplo, anthropic.claude-3-5-sonnet-202406
 Siga as instruções para ativar o modelo na documentação da aws:
  https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html
 
+![image](https://github.com/user-attachments/assets/234c351e-3412-4958-9e80-c56b1651b2f7)
