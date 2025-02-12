@@ -1,3 +1,4 @@
+# exemplo do formato dos DOMAINS SCHEMA
 DOMAIN_DESCRIPTIONS = {
     "facebook_refined": {
         "schema": "facebook_refined",
