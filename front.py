@@ -4,7 +4,7 @@ from settings import DOMAIN_DESCRIPTIONS
 
 # Configurações da página
 st.set_page_config(
-    page_title="POC AI Agent",
+    page_title="V4 AI Agent",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -38,7 +38,7 @@ st.markdown("""
 
 # Sidebar com informações e configurações
 with st.sidebar:
-    st.image("https://via.placeholder.com/150", caption="POC AI Agent")
+    st.image("https://via.placeholder.com/150", caption="V4 AI Agent")
     st.header("Configurações")
     
     # Opções de configuração
@@ -53,7 +53,7 @@ with st.sidebar:
         st.experimental_rerun()
 
 # Título principal com ícone
-st.title("🤖 POC AI Agent")
+st.title("🤖 V4 AI Agent")
 
 # Inicialização do estado da sessão
 if 'memory' not in st.session_state:
@@ -153,7 +153,7 @@ if input_text:
 st.markdown("---")
 st.markdown(
     "<div style='text-align: center; color: #666;'>"
-    "Desenvolvido com ❤️ por Jonathan A C"
+    "Desenvolvido com ❤️ pela Equipe V4"
     "</div>",
     unsafe_allow_html=True
 )

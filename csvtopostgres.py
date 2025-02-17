@@ -80,13 +80,13 @@ def load_csv_to_db(engine, schema, table_name, csv_file):
 
 if __name__ == "__main__":
     # Definir variáveis
-    schema = 'schema_alvo'  # Altere para o schema desejado
-    table_name = 'tabela_alvo'  # Altere para o nome da tabela desejada
-    csv_folder = 'files-to-db'  # Pasta onde os arquivos CSV estão localizados
-    NOME_DO_CSV = 'csv_alvo.csv'  # Nome do arquivo CSV
-    csv_file = os.path.join(csv_folder, NOME_DO_CSV)  # Caminho completo para o arquivo CSV
+    schema = 'public'  # Altere para o schema desejado
+    table_name = 'cdp_ef'  # Altere para o nome da tabela desejada
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_folder = os.path.join(current_dir, 'files_to_db')
+    NOME_DO_CSV = 'mock_data.csv'  # Nome do arquivo CSV
+    csv_file = os.path.join(csv_folder, NOME_DO_CSV)
     output_file = 'catalogo_gerado.py'  # Nome do arquivo de saída
-
     
     # Criar a conexão com o banco de dados
     engine = get_db_engine()

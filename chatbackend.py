@@ -3,7 +3,7 @@ import psycopg2
 import json
 import re
 import os
-from langchain.memory import ConversationSummaryBufferMemory
+from langchain.memory import ConversationBufferMemory
 from langchain.chains.conversation.base import ConversationChain
 from langchain.chains.llm import LLMChain
 from langchain_community.chat_models import BedrockChat
@@ -15,14 +15,16 @@ from settings import DOMAIN_DESCRIPTIONS
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
 
+ACESS_KEY = os.getenv('ACESS_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
+
 def get_llm():
     llm = BedrockChat(
-        model_id="anthropic.claude-3-5-sonnet-20240620-v1:0", #set the foundation model
-        model_kwargs= {                         
+        model_id="anthropic.claude-3-5-sonnet-20240620-v1:0",
+        client=bedrock_client,  # Use the same client instance
+        model_kwargs={                         
             "temperature": 0,
             "max_tokens": 1000,
-            # "topP": 0.5, # Removido Depreciated
-            # "maxTokenCount": 100, # Removido Depreciated
         }
     )
     return llm
@@ -30,7 +32,9 @@ def get_llm():
 # Configurar cliente AWS Bedrock
 bedrock_client = boto3.client(
     'bedrock-runtime',  
-    region_name='us-east-1'
+    region_name='us-east-1',''
+    aws_access_key_id=ACESS_KEY,
+    aws_secret_access_key=SECRET_KEY
 )
 
 # Function to configure the LLM with AWS Bedrock using the custom class
@@ -81,11 +85,17 @@ def query_postgresql(query):
 # Função para transformar a pergunta em linguagem natural em uma consulta SQL usando Bedrock
 def get_sql_from_question_bedrock(question, all_domain_descriptions, memory):
     prompt = (
-        "Você é um assistente que transforma perguntas em linguagem natural em consultas SQL.\n"
-        f"Sua tarefa é transformar a seguinte pergunta em uma consulta SQL: {question}. Considere que os dados vão estar em formato STRING"
-        "Use os seguintes domínios de dados para auxiliar na criação da consulta SQL.\n"
+        "Você é um assistente especializado em transformar perguntas em consultas SQL.\n"
+        f"Sua tarefa é transformar a seguinte pergunta em uma consulta SQL: {question}\n\n"
+        "IMPORTANTE:\n"
+        "- Todos os campos no banco de dados estão armazenados como VARCHAR/STRING\n"
+        "- Para operações matemáticas, use CAST(campo AS TIPO), exemplo:\n"
+        "  * Para números inteiros: CAST(valor AS INTEGER)\n"
+        "  * Para decimais: CAST(valor AS DECIMAL(10,2))\n"
+        "  * Para datas: CAST(data AS DATE)\n"
+        "- Sempre use CAST ao comparar ou calcular valores numéricos\n\n"
+        "Use os seguintes domínios de dados para auxiliar na criação da consulta SQL:\n"
         "Por favor, retorne apenas a consulta SQL dentro de um bloco ```sql```. Não inclua nenhuma outra explicação ou comentário."
-
     )
     
     # Adicionar descrições de colunas para todos os domínios
@@ -133,12 +143,13 @@ def interpret_results_with_bedrock(question, results, headers, memory):
     except Exception as e:
         return f"Erro ao interpretar os resultados: {e}"
 
-# Função para criar a memória da sessão
 def create_memory():
-    llm = get_llm()
-    memory = ConversationSummaryBufferMemory(llm=llm, max_token_limit=10000)
+    memory = ConversationBufferMemory(
+        return_messages=True,
+        memory_key="history"
+    )
     return memory
-
+    
 # Função para obter a resposta do chatbot com contexto de memória
 def get_chat_response(input_text, memory):
     llm = get_llm()  # Utilize o LLM personalizado Bedrock
