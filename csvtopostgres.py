@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from datetime import datetime
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, MetaData, Table, Column, String, Integer, Float
 from sqlalchemy.orm import sessionmaker
@@ -13,6 +14,8 @@ def generate_catalog_from_csv(schema, table_name, csv_file, output_file):
     df = pd.read_csv(csv_file)
     
     # Gerar as colunas com descrições vazias
+    df.columns = [col.lower() for col in df.columns]
+
     columns = {col: "" for col in df.columns}
     
     # Estruturar o catálogo no formato solicitado
@@ -64,6 +67,8 @@ def create_table_from_csv(engine, schema, table_name, csv_file):
     metadata = MetaData(schema=schema)
     
     # Definir as colunas automaticamente com base no DataFrame
+    df.columns = [col.lower() for col in df.columns]
+
     columns = [Column(col, String) for col in df.columns]
     
     # Criar a tabela no banco de dados
@@ -73,18 +78,24 @@ def create_table_from_csv(engine, schema, table_name, csv_file):
 # Função para inserir os dados do CSV na tabela
 def load_csv_to_db(engine, schema, table_name, csv_file):
     # Criar o DataFrame a partir do CSV
-    df = pd.read_csv(csv_file)
     
+    df = pd.read_csv(csv_file)
+    df.columns = [col.lower() for col in df.columns]
+
+    inserted_at = 'inserted_at'
+    df = df.astype('string')
+    df[f'{inserted_at}'] = datetime.now()
+
     # Enviar os dados para o banco de dados
     df.to_sql(table_name, engine, schema=schema, if_exists='append', index=False)
 
 if __name__ == "__main__":
     # Definir variáveis
     schema = 'public'  # Altere para o schema desejado
-    table_name = 'cdp_ef'  # Altere para o nome da tabela desejada
+    table_name = 'bank_fraud'  # Altere para o nome da tabela desejada
     current_dir = os.path.dirname(os.path.abspath(__file__))
     csv_folder = os.path.join(current_dir, 'files_to_db')
-    NOME_DO_CSV = 'mock_data.csv'  # Nome do arquivo CSV
+    NOME_DO_CSV = 'Bank_Transaction_Fraud_Detection.csv'  # Nome do arquivo CSV
     csv_file = os.path.join(csv_folder, NOME_DO_CSV)
     output_file = 'catalogo_gerado.py'  # Nome do arquivo de saída
     
@@ -92,7 +103,7 @@ if __name__ == "__main__":
     engine = get_db_engine()
     
     # Criar a tabela automaticamente
-    create_table_from_csv(engine, schema, table_name, csv_file)
+    # create_table_from_csv(engine, schema, table_name, csv_file)
     
     # Carregar os dados do CSV para o banco de dados
     load_csv_to_db(engine, schema, table_name, csv_file)

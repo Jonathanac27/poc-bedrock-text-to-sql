@@ -14,6 +14,17 @@ bedrock_client = boto3.client('bedrock-runtime', region_name='us-east-1', aws_ac
 
 # Função para obter o LLM e invocar o modelo
 
+def format_sql_response(sql_response):
+    content = sql_response['content'][0]['text']
+
+    # Usar regex para extrair a consulta SQL dentro do bloco ```sql```
+    match = re.search(r'```sql\n(.*?)\n```', content, re.DOTALL)
+    if match:
+        query = match.group(1).strip()
+    else:
+        query = content
+    return query
+
 def query_postgresql(query):
     try:
         connection = psycopg2.connect(
@@ -37,6 +48,7 @@ def query_postgresql(query):
         return f"Erro ao conectar ao PostgreSQL: {error}"
     
 def get_llm(input_text):
+
     # Monta o payload no formato correto
     payload = {
         "anthropic_version": "bedrock-2023-05-31",
@@ -63,8 +75,7 @@ def get_llm(input_text):
     return json.loads(response['body'].read().decode('utf-8'))
 
 question = '''
-Quantos clientes fizeram investiram no google em 2024?
-'''    
+Me ajude a saber se tem uma relação da idade e da localidade de pessoas que  realizam fraudes'''    
 
 prompt = (
         "Você é um assistente especializado em transformar perguntas em consultas SQL.\n"
@@ -100,5 +111,8 @@ else:
     query = content
 
 query_postgresql(query)
+
+query = format_sql_response(sql_response)  # Passe a memória se necessário
+print(query)
 
 print(response)
