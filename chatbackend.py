@@ -32,7 +32,7 @@ def get_llm():
 # Configurar cliente AWS Bedrock
 bedrock_client = boto3.client(
     'bedrock-runtime',  
-    region_name='us-east-1',''
+    region_name='us-east-1',
     aws_access_key_id=ACESS_KEY,
     aws_secret_access_key=SECRET_KEY
 )
